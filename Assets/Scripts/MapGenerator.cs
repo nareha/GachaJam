@@ -10,8 +10,11 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private int mapWidth;
     [SerializeField] private int mapHeight;
 
-    private List<GameObject> mapTiles = new List<GameObject>();
-    private List<GameObject> pathTiles = new List<GameObject>();
+    public static List<GameObject> mapTiles = new List<GameObject>();
+    public static List<GameObject> pathTiles = new List<GameObject>();
+
+    public static GameObject startTile;
+    public static GameObject endTile;
 
     private bool reachedX = false;
     private bool reachedY = false;
@@ -93,8 +96,8 @@ public class MapGenerator : MonoBehaviour
         int randTop = Random.Range(0, mapWidth);
         int randBottom = Random.Range(0, mapWidth);
 
-        GameObject startTile = topEdgeTiles[randTop];
-        GameObject endTile = bottomEdgeTiles[randBottom];
+        startTile = topEdgeTiles[randTop];
+        endTile = bottomEdgeTiles[randBottom];
 
         currentTile = startTile;
 
