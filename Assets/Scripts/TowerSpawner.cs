@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class TowerSpawner : MonoBehaviour
 {
-    public SpriteRenderer testSprite;
-
     public List<GameObject> towersPrefabs;
     public Transform spawnTowerRoot;
     public List<Image> towersUI;
@@ -41,8 +39,17 @@ public class TowerSpawner : MonoBehaviour
 
             if (spawnTilemap.GetColliderType(cellPosDefault) == Tile.ColliderType.Sprite)
             {
-                SpawnTower(cellPosCentered);
-                spawnTilemap.SetColliderType(cellPosDefault, Tile.ColliderType.None);
+                int towerCost = towersPrefabs[spawnID].GetComponent<Tower>().cost;
+                if (GameManager.instance.points.EnoughPoints(towerCost))
+                {
+                    GameManager.instance.points.Use(towerCost);
+                    SpawnTower(cellPosCentered);
+                    spawnTilemap.SetColliderType(cellPosDefault, Tile.ColliderType.None);
+                }
+                else
+                {
+                    Debug.Log("not enough currency!");
+                }
             }
         }
     }
@@ -52,6 +59,8 @@ public class TowerSpawner : MonoBehaviour
         GameObject tower = Instantiate(towersPrefabs[spawnID], spawnTowerRoot);
 
         tower.transform.position = position;
+
+        tower.GetComponent<Tower>().Init();
 
         DeselectTower();
     }

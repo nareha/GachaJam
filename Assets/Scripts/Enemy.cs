@@ -1,74 +1,29 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
-    // Enemy-oriented fields
-    [SerializeField] private float enemyHealth;
-    [SerializeField] private float movementSpeed;
+    public int health;
 
-    // User-oriented fields
-    private int killReward;
-    private int damage;
-
-    private GameObject targetTile;
-
-    private void Awake()
+    public void LoseHealth(int amount)
     {
-        EnemyManager.enemies.Add(gameObject);
-    }
+        health -= amount;
 
-    private void Start()
-    {
-        initializeEnemy();
-    }
-    
-    private void initializeEnemy()
-    {
-        targetTile = MapGenerator.startTile;
-    }
+        StartCoroutine(BlinkRed());
 
-    public void takeDamage(float amount)
-    {
-        enemyHealth -= amount;
-        if (enemyHealth <= 0)
+        if (health <= 0)
         {
-            removeSelf();
+            GameManager.instance.points.Gain(1);
+            Destroy(transform.gameObject);
         }
     }
 
-    private void removeSelf()
+    IEnumerator BlinkRed()
     {
-        EnemyManager.enemies.Remove(gameObject);
-        Destroy(transform.gameObject);
-    }
-
-    private void moveEnemy()
-    {
-        transform.position = Vector3.MoveTowards(transform.position, targetTile.transform.position, movementSpeed * Time.deltaTime);
-    }
-
-    private void checkPosition()
-    {
-        if (targetTile != null && targetTile != MapGenerator.endTile)
-        {
-            float distance = (transform.position - targetTile.transform.position).magnitude;
-
-            if (distance < 0.001f)
-            {
-                int currentIndex = MapGenerator.pathTiles.IndexOf(targetTile);
-
-                targetTile = MapGenerator.pathTiles[currentIndex + 1];
-            }
-        }
-    }
-
-    private void Update()
-    {
-        checkPosition();
-        moveEnemy();
-
-        takeDamage(0);
+        GetComponent<SpriteRenderer>().color = Color.red;
+        yield return new WaitForSeconds(0.2f);
+        GetComponent<SpriteRenderer>().color = Color.white;
     }
 }

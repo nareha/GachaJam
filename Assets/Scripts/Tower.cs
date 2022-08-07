@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class Tower : MonoBehaviour
 {
-    [SerializeField] private float range;
-    [SerializeField] private float damage;
+    public int cost;
+
+    public float range;
+    public int damage;
+
+    public virtual void Init() {}
+
     [SerializeField] private float attackCooldown; // Time (in seconds) between each attack
 
     private float nextTimeToAttack;
@@ -17,12 +22,12 @@ public class Tower : MonoBehaviour
         nextTimeToAttack = Time.time;
     }
 
-    private void updateNearestEnemy()
+    private void UpdateNearestEnemy()
     {
         GameObject curNearestEnemy = null;
         
         float distance = Mathf.Infinity;
-        foreach (GameObject enemy in EnemyManager.enemies)
+        foreach (GameObject enemy in GameObject.FindGameObjectsWithTag("Enemy"))
         {
             if (enemy != null)
             {
@@ -50,12 +55,12 @@ public class Tower : MonoBehaviour
     {
         Enemy enemyScript = currentTarget.GetComponent<Enemy>();
 
-        enemyScript.takeDamage(damage);
+        enemyScript.LoseHealth(damage);
     }
 
     private void Update()
     {
-        updateNearestEnemy();
+        UpdateNearestEnemy();
 
         if (Time.time >= nextTimeToAttack)
         {
