@@ -14,19 +14,25 @@ public class TowerSpawner : MonoBehaviour
 
     int spawnID = -1;
 
+    private bool selected = false;
+
     public void SelectTower(int id)
     {
+        if (selected)
+        {
+            return;
+        }
+
         spawnID = id;
         towersUI[spawnID].color = Color.white;
+        selected = true;
     }
 
     public void DeselectTower()
     {
+        towersUI[spawnID].color = new Color(0.5f, 0.5f, 0.5f);
         spawnID = -1;
-        foreach(var t in towersUI)
-        {
-            t.color = new Color(0.5f, 0.5f, 0.5f);
-        }
+        selected = false;
     }
 
     private void DetectSpawnPoint()
@@ -48,9 +54,13 @@ public class TowerSpawner : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("not enough currency!");
+                    DeselectTower();
                 }
             }
+        }
+        else if (Input.GetMouseButtonDown(1))
+        {
+            DeselectTower();
         }
     }
 
